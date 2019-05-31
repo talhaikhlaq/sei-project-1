@@ -1,3 +1,41 @@
-body {
-  background-color: green;
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+Main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.grid {
+  width: 700px;
+  height: 700px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+div.grid-item {
+  width: 70px;
+  height: 70px;
+  border: 1px dashed black;
+}
+
+div.grid-item.player {
+  /* background-image: url('../assets/pika-sprite.png'); */
+  background-color: blue;
+  background-repeat: no-repeat;
+  background-size: contain;
 }

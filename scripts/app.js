@@ -14,14 +14,18 @@ function movePlayer() {
 
 function moveEnemy() {
   squares.forEach(square => square.classList.remove('enemy')) // removing the classList associated to the enemy image
-  console.log(squares)
+  // console.log(squares)
   squares[enemyIndex].classList.add('enemy') // adding the classList associated to the enemy image
 }
 
-const enemyMoveTimer = setInterval(enemyMovementFlow, 500)
-setTimeout(() => {
+let enemyMoveTimer = null
+const startIt = () => {
+  enemyMoveTimer = setInterval(enemyMovementFlow, 500)
+}
+
+function stopIt() {
   clearInterval(enemyMoveTimer)
-}, 50000)
+}
 
 function enemyMovementFlow() {
 
@@ -44,7 +48,7 @@ function enemyMovementFlow() {
     enemyIndex += width
     enemyShouldMove = true
   } else {
-    console.log('no movement')
+    // console.log('no movement')
   }
 }
 
@@ -87,6 +91,11 @@ function init() {
   // get hold of that parent grid div
   const grid = document.querySelector('.grid')
 
+  // get hold of the start button
+  const startBtn = document.querySelector('#start')
+
+  //get hold of the stop button
+  const stopBtn = document.querySelector('#stop')
 
   // used a for loop to fill my grid with individual squares, as many as the width times the width
   for (let i = 0; i < width * width; i++) {
@@ -102,6 +111,10 @@ function init() {
 
   // add the alien image to the grid squares
   squares[enemyIndex].classList.add('enemy')
+
+
+  startBtn.addEventListener('click', startIt)
+  stopBtn.addEventListener('click', stopIt)
 
 
   window.addEventListener('keydown', handleKeyDown)

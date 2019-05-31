@@ -39,3 +39,18 @@ div.grid-item.player {
   background-repeat: no-repeat;
   background-size: contain;
 }
+
+div.grid-item.enemy {
+  /* background-image:  */
+  background-color: black;
+}
+
+div.grid-item.laser {
+  /* backgroun-image:  */
+  background-color: red;
+}
+
+div.grid-item.bomb {
+  /* background-image:  */
+  background-color: purple;
+}

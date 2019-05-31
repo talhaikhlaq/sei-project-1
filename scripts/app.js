@@ -1,13 +1,66 @@
 const width = 10
 const squares = []
 let playerIndex = Math.floor(width * width - width) // will keep player at the bottom of the gameBoard
+let enemyIndex = 0
+let enemyMoveCount = 0
+let enemyShouldMove = true
+
 
 
 function movePlayer() {
   squares.forEach(square => square.classList.remove('player')) // removing the classList associated to the player image
   squares[playerIndex].classList.add('player') // adding the classList associated to the player image
-
 }
+
+function moveEnemy() {
+  squares.forEach(square => square.classList.remove('enemy')) // removing the classList associated to the enemy image
+  console.log(squares)
+  squares[enemyIndex].classList.add('enemy') // adding the classList associated to the enemy image
+}
+
+const enemyMoveTimer = setInterval(enemyMovementFlow, 500)
+setTimeout(() => {
+  clearInterval(enemyMoveTimer)
+}, 50000)
+
+function enemyMovementFlow() {
+
+  if (enemyShouldMove) {
+    // move right
+    enemyIndex ++
+    moveEnemy()
+    enemyMoveCount ++
+  } else if (!enemyShouldMove) {
+    // move left
+    enemyIndex --
+    moveEnemy()
+    enemyMoveCount --
+  }
+
+  if (enemyMoveCount === 9) {
+    enemyIndex += width
+    enemyShouldMove = false
+  } else if (enemyMoveCount === 0) {
+    enemyIndex += width
+    enemyShouldMove = true
+  } else {
+    console.log('no movement')
+  }
+}
+
+
+// function enemyMoveLR(){
+//   if (enemyIndex % width < width - 1) {
+//     enemyIndex++
+//     squares.forEach(square => square.classList.remove('enemy')) // removing the classList associated to the enemy image
+//     squares[enemyIndex].classList.add('enemy') // adding the classList associated to the enemy image
+//   } else if (enemyIndex % width === width - 1) {
+//     enemyIndex += width
+//     squares.forEach(square => square.classList.remove('enemy'))
+//     squares[enemyIndex].classList.add('enemy')
+//     enemyMoveRL()
+//   }
+// }
 
 
 function handleKeyDown(e) {
@@ -31,7 +84,6 @@ function handleKeyDown(e) {
 
 
 function init() {
-
   // get hold of that parent grid div
   const grid = document.querySelector('.grid')
 
@@ -45,11 +97,16 @@ function init() {
     grid.append(square)
   }
 
-  // adds the player image to the squares
+  // adds the player image to the grid squares
   squares[playerIndex].classList.add('player')
+
+  // add the alien image to the grid squares
+  squares[enemyIndex].classList.add('enemy')
+
 
   window.addEventListener('keydown', handleKeyDown)
 
 }
 
 window.addEventListener('DOMContentLoaded', init)
+// window.addEventListener('DOMContentLoaded', () => console.log('test'))

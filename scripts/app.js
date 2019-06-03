@@ -1,91 +1,174 @@
+// GRID VARIABLES --------------------------------------------------------------
 const width = 10
+
+// PLAYER VARIABLES ------------------------------------------------------------
 const squares = []
 let playerIndex = Math.floor(width * width - width) // will keep player at the bottom of the gameBoard
-let enemyIndex = 0
-let enemyMoveCount = 0
-let enemyShouldMove = true
 
+// ENEMY VARIABLES -------------------------------------------------------------
+const allEnemies = []
+// let enemyIndex = 0 // used for single enemy movement
+let enemyMoveCount = 0 // used for single enemy movement
+let enemyShouldMove = true // used for single enemy movement
 
+// MISSILE VARIABLES -----------------------------------------------------------
+let missilePosition = null
 
+// PLAYER KEYBOARD COMMANDS FOR MOVEMENT AND FIRING --------------------------
+function handleKeyDown(e) {
+  let playerShouldMove = true
+  let missileShouldFire = false
+  switch(e.keyCode) {
+    case 39:
+    if (playerIndex % width < width -1) {
+      playerIndex++
+    }
+    break
+    case 37:
+    if (playerIndex % width > 0) {
+      playerIndex--
+    }
+    break
+    case 83:
+    missileShouldFire = true
+    missilePosition = playerIndex - width
+    break
+    default:
+    playerShouldMove = false
+    missileShouldFire = false
+  }
+  if (playerShouldMove) movePlayer()
+  if (missileShouldFire) fireMissile()
+}
+
+// ADDING AND REMOVING CLASSLIST ASSOCIATED TO PLAYER IMAGE --------------------
 function movePlayer() {
   squares.forEach(square => square.classList.remove('player')) // removing the classList associated to the player image
   squares[playerIndex].classList.add('player') // adding the classList associated to the player image
 }
 
-function moveEnemy() {
-  squares.forEach(square => square.classList.remove('enemy')) // removing the classList associated to the enemy image
-  // console.log(squares)
-  squares[enemyIndex].classList.add('enemy') // adding the classList associated to the enemy image
-}
-
-let enemyMoveTimer = null
-const startIt = () => {
-  enemyMoveTimer = setInterval(enemyMovementFlow, 500)
-}
-
-function stopIt() {
-  clearInterval(enemyMoveTimer)
-}
-
-function enemyMovementFlow() {
-
-  if (enemyShouldMove) {
-    // move right
-    enemyIndex ++
-    moveEnemy()
-    enemyMoveCount ++
-  } else if (!enemyShouldMove) {
-    // move left
-    enemyIndex --
-    moveEnemy()
-    enemyMoveCount --
+// ENEMY CONSTRUCTOR -----------------------------------------------------------
+class Enemy {
+  constructor(enemyRank, enemyIndex, enemyMoveCount, enemyHit, enemyShouldMove, enemyMoveTimer) {
+    this.enemyRank = enemyRank
+    this.enemyIndex = enemyIndex
+    this.enemyMoveCount = enemyMoveCount
+    this.enemyHit = enemyHit
+    this.enemyShouldMove = enemyShouldMove
+    this.enemyMoveTimer = enemyMoveTimer
   }
 
-  if (enemyMoveCount === 9) {
-    enemyIndex += width
-    enemyShouldMove = false
-  } else if (enemyMoveCount === 0) {
-    enemyIndex += width
-    enemyShouldMove = true
-  } else {
-    // console.log('no movement')
+
+  // function to make ALL enemy move based on the true/false statement of enemyShouldMove
+  enemyMovementFlow() {
+    squares[this.enemyIndex].classList.remove('enemy')
+    if (enemyShouldMove) {
+      this.enemyIndex ++ // move right
+      // moveEnemy() no longer called, now embedded within function
+      this.enemyMoveCount ++
+    } else {
+      this.enemyIndex -- // move left
+      // moveEnemy() no longer called, now embedded within function
+      this.enemyMoveCount --
+    }
+    squares[this.enemyIndex].classList.add('enemy')
   }
+
+  dropLine() {
+    if (enemyMoveCount === 1) {
+      squares[this.enemyIndex].classList.remove('enemy')
+      enemyIndex += width // move down a row when width end is reached
+      enemyShouldMove = !enemyShouldMove
+      squares[this.enemyIndex].classList.add('enemy')
+    } else if (enemyMoveCount === 0) {
+      squares[this.enemyIndex].classList.remove('enemy')
+      enemyIndex += width // move down a row when width end is reached
+      enemyShouldMove = enemyShouldMove
+      squares[this.enemyIndex].classList.add('enemy')
+    }
+  }
+
+
 }
 
+// moveEnemy() {
+  //   // squares.forEach(square => square.classList.remove('enemy')) // removing the classList associated to the enemy image
+  //   // squares[enemyIndex].classList.add('enemy') // adding the classList associated to the enemy image
+  //   allEnemies.forEach(enemy => squares[enemy.enemyIndex].classList.remove('enemy'))
+  //   allEnemies.forEach(enemy => squares[enemy.enemyIndex].classList.add('enemy'))
+  // }
 
-// function enemyMoveLR(){
-//   if (enemyIndex % width < width - 1) {
-//     enemyIndex++
-//     squares.forEach(square => square.classList.remove('enemy')) // removing the classList associated to the enemy image
-//     squares[enemyIndex].classList.add('enemy') // adding the classList associated to the enemy image
-//   } else if (enemyIndex % width === width - 1) {
+
+allEnemies.push(new Enemy(1, 0, 0, false, true, null))
+allEnemies.push(new Enemy(1, 2, 0, false, true, null))
+allEnemies.push(new Enemy(1, 4, 0, false, true, null))
+allEnemies.push(new Enemy(1, 6, 0, false, true, null))
+allEnemies.push(new Enemy(1, 8, 0, false, true, null))
+
+allEnemies.push(new Enemy(2, 11, 0, false, true, null))
+allEnemies.push(new Enemy(2, 13, 0, false, true, null))
+allEnemies.push(new Enemy(2, 15, 0, false, true, null))
+allEnemies.push(new Enemy(2, 17, 0, false, true, null))
+
+allEnemies.push(new Enemy(3, 20, 0, false, true, null))
+allEnemies.push(new Enemy(3, 22, 0, false, true, null))
+allEnemies.push(new Enemy(3, 24, 0, false, true, null))
+allEnemies.push(new Enemy(3, 26, 0, false, true, null))
+allEnemies.push(new Enemy(3, 28, 0, false, true, null))
+
+
+
+
+
+
+
+// ORIGINAL function to make SINGLE ENEMY move based on the true/false statement of enemyShouldMove
+// function enemyMovementFlow() {
+//
+//   if (enemyShouldMove) {
+//     // move right
+//     enemyIndex ++
+//     moveEnemy()
+//     enemyMoveCount ++
+//   } else if (!enemyShouldMove) {
+//     // move left
+//     enemyIndex --
+//     moveEnemy()
+//     enemyMoveCount --
+//   }
+//
+//   if (enemyMoveCount === 9) {
 //     enemyIndex += width
-//     squares.forEach(square => square.classList.remove('enemy'))
-//     squares[enemyIndex].classList.add('enemy')
-//     enemyMoveRL()
+//     enemyShouldMove = false
+//   } else if (enemyMoveCount === 0) {
+//     enemyIndex += width
+//     enemyShouldMove = true
+//   } else if (enemyIndex === 89) {
+//     resetIt()
 //   }
 // }
 
 
-function handleKeyDown(e) {
-  let playerShouldMove = true
-  switch(e.keyCode) {
-    case 39:
-      if (playerIndex % width < width -1) {
-        playerIndex++
-      }
-      break
-    case 37:
-      if (playerIndex % width > 0) {
-        playerIndex--
-      }
-      break
-    default:
-      playerShouldMove = false
-  }
-  if (playerShouldMove) movePlayer()
-}
 
+// FUNCTION FOR INITIATING MISSILE
+// function fireMissile() {
+//   squares[missilePosition].classList.add('missile')
+//   const missileMoveTimer = setInterval(moveMissile, 300) // speed of missile movement
+//   setTimeout(() => {
+//     clearInterval(missileMoveTimer) // resetting of missile movement
+//   }, 5000)
+// }
+
+// function moveMissile() {
+//   squares[missilePosition].classList.remove('missile')
+//   missilePosition -= width
+//   squares[missilePosition].classList.add('missile')
+// }
+
+// function for weapon/enemy collision
+// function missileCollision() {
+//
+// }
 
 function init() {
   // get hold of that parent grid div
@@ -95,7 +178,7 @@ function init() {
   const startBtn = document.querySelector('#start')
 
   //get hold of the stop button
-  const stopBtn = document.querySelector('#stop')
+  const resetBtn = document.querySelector('#reset')
 
   // used a for loop to fill my grid with individual squares, as many as the width times the width
   for (let i = 0; i < width * width; i++) {
@@ -110,14 +193,49 @@ function init() {
   squares[playerIndex].classList.add('player')
 
   // add the alien image to the grid squares
-  squares[enemyIndex].classList.add('enemy')
+  // squares[enemyIndex].classList.add('enemy')
+  allEnemies.forEach(enemy => squares[enemy.enemyIndex].classList.add('enemy'))
 
 
-  startBtn.addEventListener('click', startIt)
-  stopBtn.addEventListener('click', stopIt)
+  function enemyMove() {
+    if (enemyShouldMove) {
+      allEnemies.forEach(enemy => {
+        enemy.enemyMovementFlow()
+      })
+      enemyMoveCount ++
+    } else if (!enemyShouldMove) {
+      allEnemies.forEach(enemy => {
+        enemy.enemyMovementFlow()
+      })
+      enemyMoveCount --
+    }
 
+    if (enemyMoveCount === 1) {
+      allEnemies.forEach(enemy => {
+        enemy.dropLine()
+      })
+    } else if (enemyMoveCount === 0) {
+      allEnemies.forEach(enemy => {
+        enemy.dropLine()
+      })
+    }
+  }
 
+  let enemyMoveTimer = null
+  function startIt() {
+    enemyMoveTimer = setInterval(enemyMove, 300) // speed of enemy movement
+  }
+
+  function resetIt() {
+    clearInterval(enemyMoveTimer) // resetting of enemy movement via button
+  }
+
+  startBtn.addEventListener('click', startIt) // click event listener for start button
+  resetBtn.addEventListener('click', resetIt) // click event listener for reset button
+
+  // KEYDOWN EVENT LISTENERS FOR PLAYER ACTIONS
   window.addEventListener('keydown', handleKeyDown)
+  // window.addEventListener('keydown', fireMissile)
 
 }
 

@@ -172,8 +172,8 @@ function moveMissile() {
   if (missilePosition <= 0) {
     clearInterval(missileMoveTimer)
     console.log('missile has been cleared')
-  // } else if (square.classList.contains('enemy')) {
-  //   console.log('hit')
+  } else if (squares[missilePosition].classList.contains('enemy')) {
+    console.log('hit')
   } else {
     squares[missilePosition].classList.add('missile')
   }

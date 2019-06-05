@@ -1,24 +1,25 @@
-// GRID VARIABLES --------------------------------------------------------------
+// GRID VARIABLES ---------------------------------------------------------------------------------------------------
 const width = 10
 
-// PLAYER VARIABLES ------------------------------------------------------------
+// PLAYER VARIABLES -------------------------------------------------------------------------------------------------
 const squares = []
 let playerIndex = Math.floor(width * width - width) // will keep player at the bottom of the gameBoard
 
-// ENEMY VARIABLES -------------------------------------------------------------
+// ENEMY VARIABLES ---------------------------------------------------------------------------------------------------
 const allEnemies = []
 const deadEnemies = [] // push 'hit' enemies to deadEnemies array so that they can't drop further bombs
 let enemyMoveCount = 0 // used for single enemy movement
 let enemyShouldMove = true // used for single enemy movement
 
 
-// PLAYER MISSILE VARIABLES -----------------------------------------------------------
+// PLAYER MISSILE VARIABLES -----------------------------------------------------------------------------------------
 let missilePosition = null
+let missileMoveTimer = null
 
-// ENEMY BOMB VARIABLES -------------------------------------------------------------
+// ENEMY BOMB VARIABLES ---------------------------------------------------------------------------------------------
 let bombPosition = null
 
-// PLAYER KEYBOARD COMMANDS FOR MOVEMENT AND FIRING --------------------------
+// PLAYER KEYBOARD COMMANDS FOR MOVEMENT AND FIRING -----------------------------------------------------------------
 function handleKeyDown(e) {
   let playerShouldMove = true
   let missileShouldFire = false
@@ -45,13 +46,13 @@ function handleKeyDown(e) {
   if (missileShouldFire) fireMissile()
 }
 
-// ADDING AND REMOVING CLASSLIST ASSOCIATED TO PLAYER IMAGE --------------------
+// ADDING AND REMOVING CLASSLIST ASSOCIATED TO PLAYER IMAGE ----------------------------------------------------
 function movePlayer() {
   squares.forEach(square => square.classList.remove('player')) // removing the classList associated to the player image
   squares[playerIndex].classList.add('player') // adding the classList associated to the player image
 }
 
-// ENEMY CONSTRUCTOR -----------------------------------------------------------
+// ENEMY CONSTRUCTOR ------------------------------------------------------------------------------------------
 class Enemy {
   constructor(enemyRank, enemyIndex, enemyMoveCount, enemyHit, enemyShouldMove) {
     this.enemyRank = enemyRank
@@ -62,7 +63,7 @@ class Enemy {
   }
 
 
-  // function to make ALL enemy move based on the true/false statement of enemyShouldMove
+  // FUNCTION TO MAKE ALL ENEMY MOVE BASED ON THE TRUE/FALSE STATEMENT OF ENEMYSHOULDMOVE ----------------------------
   enemyMovementFlow() {
     squares[this.enemyIndex].classList.remove('enemy')
     if (enemyShouldMove) {
@@ -91,15 +92,12 @@ class Enemy {
     }
   }
 
-  // FUNCTION CHECKING MISSILE/ENEMY COLLISION ************DEBUG***************************
-  missileCollision() {
-    if (square.classList.contains('missile') && square.classList.contains('enemy')) {
-      console.log('hit')
-      squares[missilePosition].classList.remove('missile')
-      squares[this.enemyIndex].classList.remove('enemy')
-      // push to new deadEnemies empty array
-    }
-  }
+
+  // INITIATING ENEMY BOMB DROP -----------------------------------------------------------
+  // dropBomb() {
+  //   if (this.enemyRank === 3)
+  // }
+
 
 }
 
@@ -157,25 +155,40 @@ allEnemies.push(new Enemy(3, 28, 0, false, true))
 
 
 
-// FUNCTION FOR INITIATING MISSILE ****************DEBUG*******************************
+// FUNCTION FOR INITIATING MISSILE -------------------------------------------------------
 function fireMissile() {
   squares[missilePosition].classList.add('missile')
-  console.log()
-  const missileMoveTimer = setInterval(moveMissile, 800) // speed of missile movement
-  setTimeout(() => {
-    clearInterval(missileMoveTimer) // resetting of missile movement
-  }, 5000)
+  missileMoveTimer = setInterval(moveMissile, 500) // speed of missile movement
+  // setTimeout(() => {
+  //   clearInterval(missileMoveTimer) // resetting of missile movement
+  // }, 5000)
 }
-// **********************DEBUG********************************************************
+
+// FUNCTION FOR MOVING MISSILE VERTICALLY UP THE GAMEBOARD -------------------------------------
 function moveMissile() {
   squares[missilePosition].classList.remove('missile')
   missilePosition -= width
   console.log(missilePosition)
-  squares[missilePosition].classList.add('missile')
+  if (missilePosition <= 0) {
+    clearInterval(missileMoveTimer)
+    console.log('missile has been cleared')
+  // } else if (square.classList.contains('enemy')) {
+  //   console.log('hit')
+  } else {
+    squares[missilePosition].classList.add('missile')
+  }
+  // missileCollision()
 }
 
-
-
+// FUNCTION CHECKING MISSILE/ENEMY COLLISION ************DEBUG***************************
+// function missileCollision() {
+//   if (missilePosition === enemyIndex) {
+//     console.log('hit')
+//     squares[missilePosition].classList.remove('missile')
+//     squares[enemyIndex].classList.remove('enemy')
+//     // push to new deadEnemies empty array
+//   }
+// }
 
 
 
@@ -245,7 +258,6 @@ function init() {
 
   // KEYDOWN EVENT LISTENERS FOR PLAYER ACTIONS
   window.addEventListener('keydown', handleKeyDown)
-  window.addEventListener('keydown', fireMissile)
 
 }
 

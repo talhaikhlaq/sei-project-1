@@ -18,6 +18,7 @@ let missileMoveTimer = null
 
 // ENEMY BOMB VARIABLES ---------------------------------------------------------------------------------------------
 let bombPosition = null
+let bombMoveTimer = null
 
 // PLAYER KEYBOARD COMMANDS FOR MOVEMENT AND FIRING -----------------------------------------------------------------
 function handleKeyDown(e) {
@@ -95,31 +96,39 @@ class Enemy {
 
   // INITIATING ENEMY BOMB DROP -----------------------------------------------------------
   // dropBomb() {
-  //   if (this.enemyRank === 3)
+  //   let bombShouldDrop = false
+  //   if (this.enemyRank === 3 || this.enemyRank === 2 || this.enemyRank === 1) {
+  //     bombShouldDrop = true
+  //     bombPosition = this.enemyRank.enemyIndex + width
+  //     squares[]
+  //   }
   // }
 
+  enemyCollision() {
+    squares[this.enemyIndex].classList.remove('enemy')
+  }
 
 }
 
 
 
 
-allEnemies.push(new Enemy(1, 0, 0, false, true))
+// allEnemies.push(new Enemy(1, 0, 0, false, true))
 allEnemies.push(new Enemy(1, 2, 0, false, true))
 allEnemies.push(new Enemy(1, 4, 0, false, true))
 allEnemies.push(new Enemy(1, 6, 0, false, true))
-allEnemies.push(new Enemy(1, 8, 0, false, true))
+// allEnemies.push(new Enemy(1, 8, 0, false, true))
 
 allEnemies.push(new Enemy(2, 11, 0, false, true))
 allEnemies.push(new Enemy(2, 13, 0, false, true))
 allEnemies.push(new Enemy(2, 15, 0, false, true))
 allEnemies.push(new Enemy(2, 17, 0, false, true))
 
-allEnemies.push(new Enemy(3, 20, 0, false, true))
+// allEnemies.push(new Enemy(3, 20, 0, false, true))
 allEnemies.push(new Enemy(3, 22, 0, false, true))
 allEnemies.push(new Enemy(3, 24, 0, false, true))
 allEnemies.push(new Enemy(3, 26, 0, false, true))
-allEnemies.push(new Enemy(3, 28, 0, false, true))
+// allEnemies.push(new Enemy(3, 28, 0, false, true))
 
 
 
@@ -174,15 +183,16 @@ function moveMissile() {
     console.log('missile has been cleared')
   } else if (squares[missilePosition].classList.contains('enemy')) {
     console.log('hit')
+    const hitEnemy = allEnemies.find(enemy => enemy.enemyIndex === missilePosition)
+    hitEnemy.enemyCollision()
   } else {
     squares[missilePosition].classList.add('missile')
   }
-  // missileCollision()
 }
 
 // FUNCTION CHECKING MISSILE/ENEMY COLLISION ************DEBUG***************************
 // function missileCollision() {
-//   if (missilePosition === enemyIndex) {
+//   if (squares[missilePosition].classList.contains('enemy')) {
 //     console.log('hit')
 //     squares[missilePosition].classList.remove('missile')
 //     squares[enemyIndex].classList.remove('enemy')

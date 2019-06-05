@@ -185,6 +185,7 @@ function moveMissile() {
     console.log('hit')
     const hitEnemy = allEnemies.find(enemy => enemy.enemyIndex === missilePosition)
     hitEnemy.enemyCollision()
+    clearInterval(missileMoveTimer)
   } else {
     squares[missilePosition].classList.add('missile')
   }

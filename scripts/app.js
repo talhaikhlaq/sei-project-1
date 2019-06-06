@@ -16,8 +16,11 @@ let missilePosition = null
 let missileMoveTimer = null
 
 // ENEMY BOMB VARIABLES ---------------------------------------------------------------------------------------------
+
+const bombs = []
 let bombPosition = null
-let bombMoveTimer = null
+let bombFallTimer = null
+let bombShouldDrop = false
 
 // PLAYER KEYBOARD COMMANDS FOR MOVEMENT AND FIRING -----------------------------------------------------------------
 function handleKeyDown(e) {
@@ -34,7 +37,7 @@ function handleKeyDown(e) {
         playerIndex--
       }
       break
-    case 83:
+    case 32:
       missileShouldFire = true
       missilePosition = playerIndex - width
       break
@@ -52,6 +55,37 @@ function movePlayer() {
   squares[playerIndex].classList.add('player') // adding the classList associated to the player image
 }
 
+
+// BOMB CONSTRUCTOR ------------------------------------------------------------------------------------------
+class Bomb {
+  constructor(position) {
+    this.position = position
+    this.initBomb()
+  }
+  initBomb() {
+    squares[this.position].classList.add('bomb')
+    this.dropBomb()
+    this.bombFallTimer = setInterval( () => this.dropBomb(), 300)
+  }
+  dropBomb() {
+    squares[this.position].classList.remove('bomb')
+    this.position += width
+    if (this.position > width * width) {
+      clearInterval(this.bombFallTimer)
+      // squares[this.position].classList.remove('bomb')
+    } else {
+      if (squares[this.position]) {
+        squares[this.position].classList.add('bomb')
+      } else {
+        clearInterval(this.bombFallTimer)
+      }
+    }
+    if (this.position >= width*width-width) {
+      // playerCollision()
+    }
+  }
+}
+
 // ENEMY CONSTRUCTOR ------------------------------------------------------------------------------------------
 class Enemy {
   constructor(enemyRank, enemyIndex, enemyMoveCount, enemyHit, enemyShouldMove) {
@@ -67,88 +101,75 @@ class Enemy {
   enemyMovementFlow() {
     squares[this.enemyIndex].classList.remove('enemy')
     if (this.enemyShouldMove && !this.enemyHit) {
+      console.log('should move right')
       this.enemyIndex ++ // move right
       // moveEnemy() no longer called, now embedded within function
-      // this.enemyMoveCount ++
+      this.enemyMoveCount ++
     } else if (!this.enemyShouldMove && !this.enemyHit) {
+      console.log('should move left')
       this.enemyIndex -- // move left
       // moveEnemy() no longer called, now embedded within function
-      // this.enemyMoveCount --
+      this.enemyMoveCount --
     }
     if (!this.enemyHit) squares[this.enemyIndex].classList.add('enemy')
+    console.log(this.enemyMoveCount)
+    this.dropLine()
   }
 
   dropLine() {
-    if (enemyMoveCount === 4 && !this.enemyHit) {
+    if (this.enemyMoveCount === 2 && !this.enemyHit) {
       squares[this.enemyIndex].classList.remove('enemy')
       this.enemyIndex += width // move down a row when width end is reached
-      enemyShouldMove = !enemyShouldMove
+      this.enemyShouldMove = false
       squares[this.enemyIndex].classList.add('enemy')
-    } else if (enemyMoveCount === 0 && !this.enemyHit) {
+    } else if (this.enemyMoveCount === -2 && !this.enemyHit) {
       squares[this.enemyIndex].classList.remove('enemy')
       this.enemyIndex += width // move down a row when width end is reached
-      enemyShouldMove = !!enemyShouldMove
+      this.enemyShouldMove = true
       squares[this.enemyIndex].classList.add('enemy')
     }
   }
-
-
-  // INITIATING ENEMY BOMB DROP -----------------------------------------------------------
-  // initBomb() {
-  //   let bombShouldDrop = false
-  //   if (this.enemyRank === 3) {
-  //     bombShouldDrop = true
-  //     bombPosition = this.enemyIndex + width
-  //     squares[bombPosition].classList.add('bomb')
-  //     bombFallTimer = setInterval(dropBomb, 100) // speed of bomb movement
-  //   } else if (this.enemyRank === 2) {
-  //     bombShouldDrop = true
-  //     bombPosition = this.enemyIndex + width
-  //     squares[bombPosition].classList.add('bomb')
-  //     bombFallTimer = setInterval(dropBomb, 100) // speed of bomb movement
-  //   } else if (this.enemyRank === 1) {
-  //     bombShouldDrop = true
-  //     bombPosition = this.enemyIndex + width
-  //     squares[bombPosition].classList.add('bomb')
-  //     bombFallTimer = setInterval(dropBomb, 100) // speed of bomb movement
-  //   }
-  // }
-  //
-  // dropBomb() {
-  //   squares[bombPosition].classList.remove('bomb')
-  //   bombPosition += width
-  //   console.log(bombPosition)
-  // }
-
 
 
   enemyCollision() {
     this.enemyHit = true
     squares[this.enemyIndex].classList.remove('enemy')
-    allEnemies.splice(0, this.enemyHit)
+    console.log('before splice', allEnemies)
+    const allEnemiesIndex = allEnemies.indexOf(this)
+    console.log('allEnemiesIndex', allEnemiesIndex)
+    allEnemies.splice(allEnemiesIndex, 1) // how to choose the hitEnemy for splicing ***********DEBUG****************
+    console.log('after splice', allEnemies)
     console.log(this.enemyIndex, squares[this.enemyIndex])
+  }
+
+  kaboom(position) {
+    bombs.push(new Bomb(position))
+  }
+  enemyShoot() {
+    // selects a random enemy and calls kaboom(bomb drop) function
+    if (!this.enemyhit) {
+      this.kaboom(allEnemies[Math.floor(Math.random() * allEnemies.length)].enemyIndex)
+    }
   }
 }
 
 
-
-
-// allEnemies.push(new Enemy(1, 0, 0, false, true))
 allEnemies.push(new Enemy(1, 2, 0, false, true))
 allEnemies.push(new Enemy(1, 4, 0, false, true))
 allEnemies.push(new Enemy(1, 6, 0, false, true))
-// allEnemies.push(new Enemy(1, 8, 0, false, true))
 
 allEnemies.push(new Enemy(2, 11, 0, false, true))
 allEnemies.push(new Enemy(2, 13, 0, false, true))
 allEnemies.push(new Enemy(2, 15, 0, false, true))
 allEnemies.push(new Enemy(2, 17, 0, false, true))
 
-// allEnemies.push(new Enemy(3, 20, 0, false, true))
 allEnemies.push(new Enemy(3, 22, 0, false, true))
 allEnemies.push(new Enemy(3, 24, 0, false, true))
 allEnemies.push(new Enemy(3, 26, 0, false, true))
-// allEnemies.push(new Enemy(3, 28, 0, false, true))
+
+
+
+console.log('allEnemies', allEnemies)
 
 
 
@@ -156,31 +177,7 @@ allEnemies.push(new Enemy(3, 26, 0, false, true))
 
 
 
-// ORIGINAL function to make SINGLE ENEMY move based on the true/false statement of enemyShouldMove
-// function enemyMovementFlow() {
-//
-//   if (enemyShouldMove) {
-//     // move right
-//     enemyIndex ++
-//     moveEnemy()
-//     enemyMoveCount ++
-//   } else if (!enemyShouldMove) {
-//     // move left
-//     enemyIndex --
-//     moveEnemy()
-//     enemyMoveCount --
-//   }
-//
-//   if (enemyMoveCount === 9) {
-//     enemyIndex += width
-//     enemyShouldMove = false
-//   } else if (enemyMoveCount === 0) {
-//     enemyIndex += width
-//     enemyShouldMove = true
-//   } else if (enemyIndex === 89) {
-//     resetIt()
-//   }
-// }
+
 
 
 
@@ -212,15 +209,6 @@ function moveMissile() {
   }
 }
 
-// FUNCTION CHECKING MISSILE/ENEMY COLLISION ************DEBUG***************************
-// function missileCollision() {
-//   if (squares[missilePosition].classList.contains('enemy')) {
-//     console.log('hit')
-//     squares[missilePosition].classList.remove('missile')
-//     squares[enemyIndex].classList.remove('enemy')
-//     // push to new deadEnemies empty array
-//   }
-// }
 
 
 
@@ -251,38 +239,23 @@ function init() {
   // squares[enemyIndex].classList.add('enemy')
   allEnemies.forEach(enemy => squares[enemy.enemyIndex].classList.add('enemy'))
 
+  // add the bomb image to the grid squares
 
-  function enemyMove() {
-    if (enemyShouldMove) {
-      allEnemies.forEach(enemy => {
-        enemy.enemyMovementFlow()
-      })
-      enemyMoveCount ++
-    } else if (!enemyShouldMove) {
-      allEnemies.forEach(enemy => {
-        enemy.enemyMovementFlow()
-      })
-      enemyMoveCount --
-    }
 
-    if (enemyMoveCount === 4) {
-      allEnemies.forEach(enemy => {
-        enemy.dropLine()
-      })
-    } else if (enemyMoveCount === 0) {
-      allEnemies.forEach(enemy => {
-        enemy.dropLine()
-      })
-    }
-  }
 
   let enemyMoveTimer = null
   function startIt() {
-    enemyMoveTimer = setInterval(enemyMove, 300) // speed of enemy movement
+    enemyMoveTimer = setInterval(() => {
+      allEnemies.forEach(enemy => enemy.enemyMovementFlow())
+    }, 1000) // speed of enemy movement
+    bombFallTimer = setInterval(() => {
+      allEnemies[Math.floor(Math.random() * allEnemies.length)].enemyShoot()
+    }, 1500)
   }
 
   function resetIt() {
     clearInterval(enemyMoveTimer) // resetting of enemy movement via button
+    clearInterval(bombFallTimer)
   }
 
   startBtn.addEventListener('click', startIt) // click event listener for start button

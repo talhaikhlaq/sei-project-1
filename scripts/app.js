@@ -7,7 +7,6 @@ let playerIndex = Math.floor(width * width - width) // will keep player at the b
 
 // ENEMY VARIABLES ---------------------------------------------------------------------------------------------------
 const allEnemies = []
-const deadEnemies = [] // push 'hit' enemies to deadEnemies array so that they can't drop further bombs
 let enemyMoveCount = 0 // used for single enemy movement
 let enemyShouldMove = true // used for single enemy movement
 
@@ -67,25 +66,25 @@ class Enemy {
   // FUNCTION TO MAKE ALL ENEMY MOVE BASED ON THE TRUE/FALSE STATEMENT OF ENEMYSHOULDMOVE ----------------------------
   enemyMovementFlow() {
     squares[this.enemyIndex].classList.remove('enemy')
-    if (enemyShouldMove) {
+    if (this.enemyShouldMove && !this.enemyHit) {
       this.enemyIndex ++ // move right
       // moveEnemy() no longer called, now embedded within function
-      this.enemyMoveCount ++
-    } else {
+      // this.enemyMoveCount ++
+    } else if (!this.enemyShouldMove && !this.enemyHit) {
       this.enemyIndex -- // move left
       // moveEnemy() no longer called, now embedded within function
-      this.enemyMoveCount --
+      // this.enemyMoveCount --
     }
-    squares[this.enemyIndex].classList.add('enemy')
+    if (!this.enemyHit) squares[this.enemyIndex].classList.add('enemy')
   }
 
   dropLine() {
-    if (enemyMoveCount === 1) {
+    if (enemyMoveCount === 4 && !this.enemyHit) {
       squares[this.enemyIndex].classList.remove('enemy')
       this.enemyIndex += width // move down a row when width end is reached
       enemyShouldMove = !enemyShouldMove
       squares[this.enemyIndex].classList.add('enemy')
-    } else if (enemyMoveCount === 0) {
+    } else if (enemyMoveCount === 0 && !this.enemyHit) {
       squares[this.enemyIndex].classList.remove('enemy')
       this.enemyIndex += width // move down a row when width end is reached
       enemyShouldMove = !!enemyShouldMove
@@ -95,19 +94,40 @@ class Enemy {
 
 
   // INITIATING ENEMY BOMB DROP -----------------------------------------------------------
-  // dropBomb() {
+  // initBomb() {
   //   let bombShouldDrop = false
-  //   if (this.enemyRank === 3 || this.enemyRank === 2 || this.enemyRank === 1) {
+  //   if (this.enemyRank === 3) {
   //     bombShouldDrop = true
-  //     bombPosition = this.enemyRank.enemyIndex + width
-  //     squares[]
+  //     bombPosition = this.enemyIndex + width
+  //     squares[bombPosition].classList.add('bomb')
+  //     bombFallTimer = setInterval(dropBomb, 100) // speed of bomb movement
+  //   } else if (this.enemyRank === 2) {
+  //     bombShouldDrop = true
+  //     bombPosition = this.enemyIndex + width
+  //     squares[bombPosition].classList.add('bomb')
+  //     bombFallTimer = setInterval(dropBomb, 100) // speed of bomb movement
+  //   } else if (this.enemyRank === 1) {
+  //     bombShouldDrop = true
+  //     bombPosition = this.enemyIndex + width
+  //     squares[bombPosition].classList.add('bomb')
+  //     bombFallTimer = setInterval(dropBomb, 100) // speed of bomb movement
   //   }
   // }
+  //
+  // dropBomb() {
+  //   squares[bombPosition].classList.remove('bomb')
+  //   bombPosition += width
+  //   console.log(bombPosition)
+  // }
+
+
 
   enemyCollision() {
+    this.enemyHit = true
     squares[this.enemyIndex].classList.remove('enemy')
+    allEnemies.splice(0, this.enemyHit)
+    console.log(this.enemyIndex, squares[this.enemyIndex])
   }
-
 }
 
 
@@ -167,7 +187,7 @@ allEnemies.push(new Enemy(3, 26, 0, false, true))
 // FUNCTION FOR INITIATING MISSILE -------------------------------------------------------
 function fireMissile() {
   squares[missilePosition].classList.add('missile')
-  missileMoveTimer = setInterval(moveMissile, 500) // speed of missile movement
+  missileMoveTimer = setInterval(moveMissile, 100) // speed of missile movement
   // setTimeout(() => {
   //   clearInterval(missileMoveTimer) // resetting of missile movement
   // }, 5000)
@@ -182,9 +202,10 @@ function moveMissile() {
     clearInterval(missileMoveTimer)
     console.log('missile has been cleared')
   } else if (squares[missilePosition].classList.contains('enemy')) {
-    console.log('hit')
+    console.log(`HIT ON ${missilePosition}`, squares[missilePosition])
     const hitEnemy = allEnemies.find(enemy => enemy.enemyIndex === missilePosition)
     hitEnemy.enemyCollision()
+    // deadEnemies.push(hitEnemy)
     clearInterval(missileMoveTimer)
   } else {
     squares[missilePosition].classList.add('missile')
@@ -244,7 +265,7 @@ function init() {
       enemyMoveCount --
     }
 
-    if (enemyMoveCount === 1) {
+    if (enemyMoveCount === 4) {
       allEnemies.forEach(enemy => {
         enemy.dropLine()
       })

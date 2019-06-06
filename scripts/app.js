@@ -37,7 +37,7 @@ function handleKeyDown(e) {
         playerIndex--
       }
       break
-    case 32:
+    case 83:
       missileShouldFire = true
       missilePosition = playerIndex - width
       break
@@ -74,16 +74,30 @@ class Bomb {
       clearInterval(this.bombFallTimer)
       // squares[this.position].classList.remove('bomb')
     } else {
-      if (squares[this.position]) {
+      if (squares[this.position].classList.contains('player')) {
+        console.log(`HIT ON ${this.position}`, squares[this.position])
+        const hitPlayer = squares[this.position].classList.contains('player') // re-write for hit playerIndex
+        console.log(squares[this.position].classList.contains('player'))
+        hitPlayer.playerCollision()
+        clearInterval(this.bombFallTimer)
+      } else if (squares[this.position]) {
         squares[this.position].classList.add('bomb')
       } else {
         clearInterval(this.bombFallTimer)
       }
     }
-    if (this.position >= width*width-width) {
-      // playerCollision()
-    }
   }
+
+  // playerCollision() {
+  //   this.enemyHit = true
+  //   squares[this.enemyIndex].classList.remove('enemy')
+  //   console.log('before splice', allEnemies)
+  //   const allEnemiesIndex = allEnemies.indexOf(this)
+  //   console.log('allEnemiesIndex', allEnemiesIndex)
+  //   allEnemies.splice(allEnemiesIndex, 1) // how to choose the hitEnemy for splicing
+  //   console.log('after splice', allEnemies)
+  //   console.log(this.enemyIndex, squares[this.enemyIndex])
+  // }
 }
 
 // ENEMY CONSTRUCTOR ------------------------------------------------------------------------------------------
@@ -137,7 +151,7 @@ class Enemy {
     console.log('before splice', allEnemies)
     const allEnemiesIndex = allEnemies.indexOf(this)
     console.log('allEnemiesIndex', allEnemiesIndex)
-    allEnemies.splice(allEnemiesIndex, 1) // how to choose the hitEnemy for splicing ***********DEBUG****************
+    allEnemies.splice(allEnemiesIndex, 1) // how to choose the hitEnemy for splicing
     console.log('after splice', allEnemies)
     console.log(this.enemyIndex, squares[this.enemyIndex])
   }
@@ -185,9 +199,6 @@ console.log('allEnemies', allEnemies)
 function fireMissile() {
   squares[missilePosition].classList.add('missile')
   missileMoveTimer = setInterval(moveMissile, 100) // speed of missile movement
-  // setTimeout(() => {
-  //   clearInterval(missileMoveTimer) // resetting of missile movement
-  // }, 5000)
 }
 
 // FUNCTION FOR MOVING MISSILE VERTICALLY UP THE GAMEBOARD -------------------------------------
@@ -202,7 +213,6 @@ function moveMissile() {
     console.log(`HIT ON ${missilePosition}`, squares[missilePosition])
     const hitEnemy = allEnemies.find(enemy => enemy.enemyIndex === missilePosition)
     hitEnemy.enemyCollision()
-    // deadEnemies.push(hitEnemy)
     clearInterval(missileMoveTimer)
   } else {
     squares[missilePosition].classList.add('missile')

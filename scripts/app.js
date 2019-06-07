@@ -80,7 +80,7 @@ class Bomb {
         console.log(`HIT ON ${this.position}`, squares[this.position])
         const hitPlayer = playerIndex // re-write for hit playerIndex
         console.log(hitPlayer)
-        hitPlayer.playerCollision()
+        this.playerCollision()
         clearInterval(this.bombFallTimer)
       } else if (squares[this.position]) {
         squares[this.position].classList.add('bomb')
@@ -122,30 +122,30 @@ class Enemy {
     if (this.enemyShouldMove && !this.enemyHit) {
       console.log('should move right')
       this.enemyIndex ++ // move right
-      // moveEnemy() no longer called, now embedded within function
       this.enemyMoveCount ++
     } else if (!this.enemyShouldMove && !this.enemyHit) {
       console.log('should move left')
       this.enemyIndex -- // move left
-      // moveEnemy() no longer called, now embedded within function
       this.enemyMoveCount --
     }
     if (!this.enemyHit) squares[this.enemyIndex].classList.add('enemy')
     console.log(this.enemyMoveCount)
-    this.dropLine()
+    setTimeout(() => {
+      this.dropLine()
+    }, 250)
   }
 
   dropLine() {
     if (this.enemyMoveCount === 2 && !this.enemyHit) {
       squares[this.enemyIndex].classList.remove('enemy')
       this.enemyIndex += width // move down a row when width end is reached
-      this.enemyShouldMove = false
       squares[this.enemyIndex].classList.add('enemy')
-    } else if (this.enemyMoveCount === -2 && !this.enemyHit) {
+      this.enemyShouldMove = false
+    } else if (this.enemyMoveCount === -1 && !this.enemyHit) {
       squares[this.enemyIndex].classList.remove('enemy')
       this.enemyIndex += width // move down a row when width end is reached
-      this.enemyShouldMove = true
       squares[this.enemyIndex].classList.add('enemy')
+      this.enemyShouldMove = true
     }
   }
 
@@ -278,6 +278,7 @@ function init() {
   function resetIt() {
     clearInterval(enemyMoveTimer) // resetting of enemy movement via button
     clearInterval(bombFallTimer)
+    window.location.reload()
   }
 
   startBtn.addEventListener('click', startIt) // click event listener for start button

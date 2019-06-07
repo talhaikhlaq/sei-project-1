@@ -249,7 +249,7 @@ function init() {
   for (let i = 0; i < width * width; i++) {
     const square = document.createElement('div')
     square.classList.add('grid-item')
-    square.innerHTML = i
+    // square.innerHTML = i
     squares.push(square)
     grid.append(square)
   }

@@ -2,12 +2,17 @@
   box-sizing: border-box;
 }
 
+@font-face {
+    font-family: 'hylia-serif';
+    src: url('../assets/Triforce.ttf') format("truetype");
+}
+
 html, body {
   margin: 0;
   padding: 0;
   height: 100vh;
   background-image: url('../assets/botw-background.jpg');
-
+  font-family: 'hylia-serif';
 }
 
 header {
@@ -25,13 +30,33 @@ Main {
   justify-content: center;
   /* background-image: url('../assets/space-background.jpg'); */
 }
+@font-face {
+    font-family: 'hylia-serif';
+    src: url('../assets/Triforce.ttf') format("truetype");
+}
+
+h1 {
+  font-family: 'hylia-serif';
+  font-size: 50px;
+  color: orange;
+}
+
+h2 {
+  color: orange;
+}
+p {
+  color: orange;
+}
 
 h3 {
-  color: white;
+  color: red;
 }
 
 .instructions {
+  width: 200px;
   margin-right: 20px;
+  text-align: center;
+  font-size: 30px;
 }
 
 .game {
@@ -43,13 +68,13 @@ div.grid {
   height: 700px;
   display: flex;
   flex-wrap: wrap;
-  box-shadow: 10px 5px 5px gold, -10px -5px 5px gold;
+  /* box-shadow: 10px 5px 5px gold, -10px -5px 5px gold; */
 }
 
 div.grid-item {
   width: 70px;
   height: 70px;
-  border: 1px dashed black;
+  /* border: 1px dashed black; */
 }
 
 div.grid-item.player {

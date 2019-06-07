@@ -119,10 +119,13 @@ button {
   padding: 5px;
   text-align: center;
   border-radius: 20%;
+  opacity: 0.8;
 }
 
 footer {
+  height: 5%;
   color: white;
   text-align: center;
   margin-top: 15px;
+  align-items: flex-end;
 }

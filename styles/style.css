@@ -6,18 +6,36 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100vh;
+  background-image: url('../assets/botw-background.jpg');
+
 }
 
 header {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* background-image: url('../assets/space-background.jpg'); */
 }
+
+
 
 Main {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* background-image: url('../assets/space-background.jpg'); */
+}
+
+h3 {
+  color: white;
+}
+
+.instructions {
+  margin-right: 20px;
+}
+
+.game {
+  margin-left: 20px;
 }
 
 div.grid {
@@ -25,6 +43,7 @@ div.grid {
   height: 700px;
   display: flex;
   flex-wrap: wrap;
+  box-shadow: 10px 5px 5px gold, -10px -5px 5px gold;
 }
 
 div.grid-item {
@@ -34,23 +53,38 @@ div.grid-item {
 }
 
 div.grid-item.player {
-  /* background-image: url('../assets/pika-sprite.png'); */
-  background-color: blue;
+  background-image: url('../assets/link-botw.gif');
+  /* background-color: blue; */
   background-repeat: no-repeat;
   background-size: contain;
 }
 
 div.grid-item.enemy {
-  /* background-image:  */
-  background-color: black;
+  background-image: url('../assets/bokoblin.gif');
+  /* background-color: black; */
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: relative;
 }
 
 div.grid-item.missile {
-  /* backgroun-image:  */
-  background-color: red;
+  background-image: url('../assets/ancient-arrow-sprite.png');
+  /* background-color: red; */
+  background-size: contain;
+  background-repeat: no-repeat;
+  /* position: relative; */
 }
 
 div.grid-item.bomb {
-  /* background-image:  */
-  background-color: purple;
+  background-image: url('../assets/goblin-mallet-sprite.png');
+  /* background-color: purple; */
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+footer {
+  color: white;
+  text-align: center;
+  margin-top: 15px;
 }

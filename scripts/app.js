@@ -4,6 +4,8 @@ const width = 10
 // PLAYER VARIABLES -------------------------------------------------------------------------------------------------
 const squares = []
 let playerIndex = Math.floor(width * width - width) // will keep player at the bottom of the gameBoard
+let score = 0
+let scoreDisplay = null
 
 // ENEMY VARIABLES ---------------------------------------------------------------------------------------------------
 const allEnemies = []
@@ -76,8 +78,8 @@ class Bomb {
     } else {
       if (squares[this.position].classList.contains('player')) {
         console.log(`HIT ON ${this.position}`, squares[this.position])
-        const hitPlayer = squares[this.position].classList.contains('player') // re-write for hit playerIndex
-        console.log(squares[this.position].classList.contains('player'))
+        const hitPlayer = playerIndex // re-write for hit playerIndex
+        console.log(hitPlayer)
         hitPlayer.playerCollision()
         clearInterval(this.bombFallTimer)
       } else if (squares[this.position]) {
@@ -88,16 +90,19 @@ class Bomb {
     }
   }
 
-  // playerCollision() {
-  //   this.enemyHit = true
-  //   squares[this.enemyIndex].classList.remove('enemy')
-  //   console.log('before splice', allEnemies)
-  //   const allEnemiesIndex = allEnemies.indexOf(this)
-  //   console.log('allEnemiesIndex', allEnemiesIndex)
-  //   allEnemies.splice(allEnemiesIndex, 1) // how to choose the hitEnemy for splicing
-  //   console.log('after splice', allEnemies)
-  //   console.log(this.enemyIndex, squares[this.enemyIndex])
-  // }
+  playerCollision() {
+    // this.enemyHit = true
+    squares[this.position].classList.remove('bomb')
+    console.log('Game Over')
+    // console.log('before splice', allEnemies)
+    // const allEnemiesIndex = allEnemies.indexOf(this)
+    // console.log('allEnemiesIndex', allEnemiesIndex)
+    // allEnemies.splice(allEnemiesIndex, 1) // how to choose the hitEnemy for splicing
+    // console.log('after splice', allEnemies)
+    // console.log(this.enemyIndex, squares[this.enemyIndex])
+  }
+
+
 }
 
 // ENEMY CONSTRUCTOR ------------------------------------------------------------------------------------------
@@ -147,7 +152,9 @@ class Enemy {
 
   enemyCollision() {
     this.enemyHit = true
+    score = score + 100
     squares[this.enemyIndex].classList.remove('enemy')
+    scoreDisplay.innerHTML = score
     console.log('before splice', allEnemies)
     const allEnemiesIndex = allEnemies.indexOf(this)
     console.log('allEnemiesIndex', allEnemiesIndex)
@@ -186,7 +193,9 @@ allEnemies.push(new Enemy(3, 26, 0, false, true))
 console.log('allEnemies', allEnemies)
 
 
-
+// function updateScore() {
+//   scoreDisplay.innerHTML = score
+// }
 
 
 
@@ -198,7 +207,7 @@ console.log('allEnemies', allEnemies)
 // FUNCTION FOR INITIATING MISSILE -------------------------------------------------------
 function fireMissile() {
   squares[missilePosition].classList.add('missile')
-  missileMoveTimer = setInterval(moveMissile, 100) // speed of missile movement
+  missileMoveTimer = setInterval(moveMissile, 60) // speed of missile movement
 }
 
 // FUNCTION FOR MOVING MISSILE VERTICALLY UP THE GAMEBOARD -------------------------------------
@@ -233,6 +242,9 @@ function init() {
   //get hold of the stop button
   const resetBtn = document.querySelector('#reset')
 
+  // get hold of the score display
+  scoreDisplay = document.querySelector('.score')
+
   // used a for loop to fill my grid with individual squares, as many as the width times the width
   for (let i = 0; i < width * width; i++) {
     const square = document.createElement('div')
@@ -257,7 +269,7 @@ function init() {
   function startIt() {
     enemyMoveTimer = setInterval(() => {
       allEnemies.forEach(enemy => enemy.enemyMovementFlow())
-    }, 1000) // speed of enemy movement
+    }, 1300) // speed of enemy movement
     bombFallTimer = setInterval(() => {
       allEnemies[Math.floor(Math.random() * allEnemies.length)].enemyShoot()
     }, 1500)

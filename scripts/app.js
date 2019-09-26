@@ -30,7 +30,7 @@ function handleKeyDown(e) {
   let missileShouldFire = false
   switch(e.keyCode) {
     case 39:
-      if (playerIndex % width < width -1) {
+      if (playerIndex % width < width) {
         playerIndex++
       }
       break
@@ -120,16 +120,16 @@ class Enemy {
   enemyMovementFlow() {
     squares[this.enemyIndex].classList.remove('enemy')
     if (this.enemyShouldMove && !this.enemyHit) {
-      console.log('should move right')
+      // console.log('should move right')
       this.enemyIndex ++ // move right
       this.enemyMoveCount ++
     } else if (!this.enemyShouldMove && !this.enemyHit) {
-      console.log('should move left')
+      // console.log('should move left')
       this.enemyIndex -- // move left
       this.enemyMoveCount --
     }
     if (!this.enemyHit) squares[this.enemyIndex].classList.add('enemy')
-    console.log(this.enemyMoveCount)
+    // console.log(this.enemyMoveCount)
     setTimeout(() => {
       this.dropLine()
     }, 250)
@@ -155,12 +155,12 @@ class Enemy {
     score = score + 100
     squares[this.enemyIndex].classList.remove('enemy')
     scoreDisplay.innerHTML = score
-    console.log('before splice', allEnemies)
+    // console.log('before splice', allEnemies)
     const allEnemiesIndex = allEnemies.indexOf(this)
-    console.log('allEnemiesIndex', allEnemiesIndex)
+    // console.log('allEnemiesIndex', allEnemiesIndex)
     allEnemies.splice(allEnemiesIndex, 1) // how to choose the hitEnemy for splicing
-    console.log('after splice', allEnemies)
-    console.log(this.enemyIndex, squares[this.enemyIndex])
+    // console.log('after splice', allEnemies)
+    // console.log(this.enemyIndex, squares[this.enemyIndex])
   }
 
   kaboom(position) {
@@ -188,9 +188,22 @@ allEnemies.push(new Enemy(3, 22, 0, false, true))
 allEnemies.push(new Enemy(3, 24, 0, false, true))
 allEnemies.push(new Enemy(3, 26, 0, false, true))
 
+// console.log('allEnemies', allEnemies)
 
 
-console.log('allEnemies', allEnemies)
+// let enemies = [{
+//   alienName: 'alienOne',
+//   alienIndx: 2
+// }, {
+//   alienName: 'alien',
+//   alienIndx: 4
+// }, {
+//   alienName: 'alien',
+//   alienIndx: 6
+// }
+// ]
+//
+// enemies.forEach(element => allEnemies.push(element))
 
 
 // function updateScore() {
@@ -214,7 +227,7 @@ function fireMissile() {
 function moveMissile() {
   squares[missilePosition].classList.remove('missile')
   missilePosition -= width
-  console.log(missilePosition)
+  // console.log(missilePosition)
   if (missilePosition <= 0) {
     clearInterval(missileMoveTimer)
     console.log('missile has been cleared')
